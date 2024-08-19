@@ -2,38 +2,11 @@ pipeline {
     agent any
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub-creds')
-        AWS_ACCESS_KEY_ID = credentials('aws-access-key')
-        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-key')
     }
     stages {
-        stage('Install Prerequisites') {
-            steps {
-                script {
-                    sh '''
-                    if ! [ -x "$(command -v docker)" ]; then
-                        curl -fsSL https://get.docker.com -o get-docker.sh
-                        sh get-docker.sh
-                        sudo usermod -aG docker $USER
-                        newgrp docker
-                    fi
-                    if ! [ -x "$(command -v kubectl)" ]; then
-                        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-                        chmod +x kubectl
-                        sudo mv kubectl /usr/local/bin/
-                    fi
-                    if ! [ -x "$(command -v terraform)" ]; then
-                        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-                        sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-                        sudo apt-get update && sudo apt-get install terraform -y
-                    fi
-                    '''
-                }
-            }
-        }
         stage('Checkout Code') {
             steps {
                 script {
-                    // No credentials are needed since the repository is public
                     git url: 'https://github.com/Fox-R-fox/3T-APP.git'
                 }
             }
