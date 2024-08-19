@@ -2,7 +2,8 @@ pipeline {
     agent any
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub-creds')
-        GITHUB_CREDENTIALS = credentials('git-hub')
+        AWS_ACCESS_KEY_ID = credentials('aws-access-key')
+        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-key')
     }
     stages {
         stage('Install Prerequisites') {
@@ -32,7 +33,8 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 script {
-                    git credentialsId: 'git-hub', url: 'https://github.com/Fox-R-fox/3T-APP.git'
+                    // No credentials are needed since the repository is public
+                    git url: 'https://github.com/Fox-R-fox/3T-APP.git'
                 }
             }
         }
